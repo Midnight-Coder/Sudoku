@@ -1,0 +1,98 @@
+h1{
+	text-align: center;
+	font-size: 26px;
+	font-weight: bold;
+	z-index: 101;
+	background: inherit;
+	border-radius: 0;
+	margin: -10;
+	min-height: 30px;
+	float: left;
+	width: 100%;
+	border-color: rgba(0, 0, 0, 0);
+	background-color: #385875;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: #FFFFFF;
+	text-align: left;
+	padding: 15px;
+	overflow:hidden;
+}
+.puzzle{
+	align-items: center;
+}
+.buttons{
+	text-align: center;
+}
+.btn{
+	display: inline-block;
+	margin: 25px 0 0 0;
+	font-weight: normal;
+	text-align: center;
+	vertical-align: middle;
+	touch-action: manipulation;
+	cursor: pointer;
+	background-image: none;
+	border: 1px solid transparent;
+	white-space: nowrap;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	border-radius: 4px;
+	-webkit-user-select: none;
+	border-color: #adadad;
+	margin-right: 15px;
+}
+.done{
+	background-color: #0d9af8;
+}
+.sudoku{
+    position: absolute;
+    top: 25%;
+    left: 30%;
+}
+table{
+	text-align: center;
+	border-width: 2px 0 0 2px;
+	border-style: solid;
+	border-collapse: collapse;
+	width: 180px;
+	height: 150px;
+}
+.secondary-table{
+	border-width: 0 2px 2px 0;
+	border-style: solid;
+	.row{
+		border-width: 0 0 2px 0;
+	}
+}
+.typehere{
+	text-align: center;
+	font-size: 14px;
+}
+.typehere:focus{
+	background-color: #adadad;
+	border-width: 0;
+}
+.hintText{
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	position: relative;
+	color: #385875;
+	top: 10px;
+}
+td{
+	padding: 0px;
+	width: 50px;
+}
+tr{
+	padding: 0px;
+}
+input{
+	width: 50px;
+	height: 30px;
+}
+.correct{
+	background-color: #bce8f1;
+}
+.wrong{
+	background-color: #ebccd1 ;
+}
