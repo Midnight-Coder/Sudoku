@@ -1,0 +1,27 @@
+html
+    head
+        title Uber Sudoku
+
+        // Setup to work like a mobile app
+        meta(charset='utf8')
+        meta(name='viewport' content='user-scalable=1, initial-scale=1, width=device-width')
+        meta(name='mobile-web-app-capable', content='yes')
+        meta(name='apple-mobile-web-app-capable', content='yes')
+        meta(name='apple-mobile-web-app-status-bar-style', content='black-translucent')
+        meta(name='apple-mobile-web-app-title', content='Uber Sudoku')
+        link(href='assets/app-icon.png', rel='apple-touch-icon')
+        link(href="assets/app-icon.png" rel="icon")
+
+        //Styles
+        link(type='text/css' href='app.css' rel='stylesheet')
+
+    body
+        h1.title('Uber Sudoku')
+        table.table
+            each row in Sudoku.matrix
+                tr.row
+                    each cell in row
+                        td.cell
+                            input(type='text' diabled=cell value=cell)
+         script(type='text/javascript' src='public/vendor/jquery/jquery.min.js')
+         script(type='text/javascript' src='index.js')
