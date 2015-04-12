@@ -76,7 +76,7 @@ $(document).ready(function() {
         //Solve the singles
         for(var i = 0; i < matrix.length; i++){
             for(var j = 0; j < matrix[i].length; j++){
-                if(Array.isArray(matrix[i][j]) && matrix[i][j].length === 1){
+                if(matrix[i][j].length === 1){
                     solveNakedSingles(matrix[i], matrix[i][j]);
                 }
             }
@@ -87,7 +87,7 @@ $(document).ready(function() {
         for(var i = 0; i < matrix.length; i++){
             var alpha = getSelectedNumbers(matrix[i]);
             for(var j = 0; j < matrix[i].length; j++){
-                if(Array.isArray(matrix[i][j]) && matrix[i][j].length > 0){
+                if(matrix[i][j].length > 0){
                     var beta = setIntersection(alpha, matrix[i][j]);
                     if(beta.length > 0){
                         matrix[i][j] = removeCommons(beta, matrix[i][j]);
@@ -311,7 +311,7 @@ $(document).ready(function() {
     setDifference = function(a, b){
         var difference = [];
         for (var j = 0; j < a.length; j++) {
-            if (!b.indexOf(a[j])) {
+            if (b.indexOf(a[j]) === -1) {
                 difference.push(a[j]);
             }
         }
@@ -321,7 +321,7 @@ $(document).ready(function() {
     setIntersection = function(a, b, type){
         var intersection = [];
         for (var j = 0; j < a.length; j++) {
-            if (b.indexOf(a[j])) {
+            if (b.indexOf(a[j]) >= 0) {
                 intersection.push(a[j]);
             }
         }
@@ -331,7 +331,7 @@ $(document).ready(function() {
     getColumn = function(matrix, column){
         var columnArray = [];
         for(var i = 0; i < matrix.length; i++){
-            if(matrix[i][column] !== ''){
+            if(matrix[i][column] !== null){
                 columnArray.push(matrix[i][column]);
             }
         }
@@ -372,7 +372,7 @@ $(document).ready(function() {
         }
 
         for(var i = 0; i < columnMatrix.length; i++){
-            if(columnMatrix[i] !== ''){
+            if(columnMatrix[i] !== null){
                 processedMatrix.push(columnMatrix[i]);
             }
         }
