@@ -4,6 +4,7 @@ $(document).ready(function() {
         wrongClass = 'wrong',
         hideElementClass = 'hidden',
         solvedArray = [],
+        $hintText = $('.hint-text'),
         lastFocus;
 
     function hideSecondary(){
@@ -12,6 +13,7 @@ $(document).ready(function() {
 
     function showSecondary(){
         $('.secondary-buttons').removeClass(hideElementClass);
+        $('.hint-text').empty();
     };
 
     $('.validate').on('click', letItRip);
@@ -29,15 +31,23 @@ $(document).ready(function() {
     });
 
     $('.solve-cell').on('click', function(event){
-        event.preventDefault();
-        event.stopPropagation();
-        var dimensions;
-
-        if (lastFocus) {
-            dimensions = lastFocus.dataset.index.split('-'),
-            lastFocus.value = solveForACell(dimensions[0], dimensions[1]);
-        }
+        lastFocus.value = solveForLastCellSelected();
         hideSecondary();
+    });
+
+    $('.validate-cell').on('click', function(event){
+        var message;
+        if(lastFocus.value == solveForLastCellSelected()){
+            message = 'Correct!';
+            $hintText.removeClass(wrongClass);
+            $hintText.addClass(correctClass);
+        }
+        else{
+            message = 'Wrong answer.'
+            $hintText.removeClass(correctClass);
+            $hintText.addClass(wrongClass);
+        }
+        $hintText.text(message);
     });
 
     function letItRip(){
@@ -46,6 +56,14 @@ $(document).ready(function() {
         jsPromise.then(function(done) {
             hideSecondary();
         });
+    }
+
+    function solveForLastCellSelected(){
+        if (!lastFocus) {
+            return null;
+        }
+        var dimensions = lastFocus.dataset.index.split('-');
+        return solveForACell(dimensions[0], dimensions[1]);
     }
 
     function fillSudoku(){
