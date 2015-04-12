@@ -2,16 +2,16 @@ $(document).ready(function() {
     var n = 9,
         correctClass = 'correct',
         wrongClass = 'wrong',
-        hideElement = 'hidden',
+        hideElementClass = 'hidden',
         solvedArray = [],
         lastFocus;
 
-    hideSecondary = function(){
-        $('.secondary-buttons').addClass(hideElement);
+    function hideSecondary(){
+        $('.secondary-buttons').addClass(hideElementClass);
     };
 
-    showSecondary = function(){
-        $('.secondary-buttons').removeClass(hideElement);
+    function showSecondary(){
+        $('.secondary-buttons').removeClass(hideElementClass);
     };
 
     $('.validate').on('click', letItRip);
@@ -28,6 +28,18 @@ $(document).ready(function() {
         lastFocus = this;
     });
 
+    $('.solve-cell').on('click', function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        var dimensions;
+
+        if (lastFocus) {
+            dimensions = lastFocus.dataset.index.split('-'),
+            lastFocus.value = solveForACell(dimensions[0], dimensions[1]);
+        }
+        hideSecondary();
+    });
+
     function letItRip(){
         var jsPromise = Promise.resolve(fillSudoku());
 
@@ -36,7 +48,7 @@ $(document).ready(function() {
         });
     }
 
-    fillSudoku = function(){
+    function fillSudoku(){
         $('.user-input').each(function(){
             var element = $(this),
                 gridIndex = this.dataset.index.split('-'),
@@ -54,7 +66,7 @@ $(document).ready(function() {
         });
     };
 
-    solveForACell = function(row, column){
+    function solveForACell(row, column){
         if(solvedArray.length === 0){
             solvedArray = populatingTheArray();
             solvingSudoku(solvedArray);
@@ -62,7 +74,7 @@ $(document).ready(function() {
         return solvedArray[row][column];
     };
 
-    populatingTheArray = function(){
+    function populatingTheArray(){
         var matrix = [];
         for(var i = 0; i < n; i++){
             matrix[i] = [];
@@ -74,7 +86,7 @@ $(document).ready(function() {
         return eliminatingTheObvious(matrix);
     };
 
-    eliminatingTheObvious = function(matrix){
+    function eliminatingTheObvious(matrix){
         var possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
         for(var i = 0; i < matrix.length; i++){
@@ -93,7 +105,7 @@ $(document).ready(function() {
         return matrix;
     };
 
-    solvingSudoku = function(matrix){
+    function solvingSudoku(matrix){
         //Solve the singles
         for(var i = 0; i < matrix.length; i++){
             for(var j = 0; j < matrix[i].length; j++){
@@ -167,14 +179,14 @@ $(document).ready(function() {
         return matrix;
     };
 
-    resultArray = function(column, arr, main){
+    function resultArray(column, arr, main){
         for(var i = 0; i < arr.length; i++){
             main[i][column] = arr[i];
         }
         return main;
     };
 
-    iterationDone = function(arr){
+    function iterationDone(arr){
         var arrayTemp = [], nonArrayTemp = [];
         for(var i = 0; i < arr.length; i++){
             if(!Array.isArray(arr[i])){
@@ -197,7 +209,7 @@ $(document).ready(function() {
         }
     };
 
-    flattenMultipleNestedLists = function(matrix){
+    function flattenMultipleNestedLists(matrix){
         //Converts a matrix:[[1,[4]],..] -> [[1,4],...]
         for(var i = 0; i < matrix.length; i++){
             flattenListOf1Elems(matrix[i]);
@@ -205,7 +217,7 @@ $(document).ready(function() {
     };
 
 
-    flattenListOf1Elems = function(list){
+    function flattenListOf1Elems(list){
         //Flattens a list of depth 1
         for(var i = 0; i < list.length; i++){
             if(list[i].length === 1){
@@ -214,7 +226,7 @@ $(document).ready(function() {
         }
     };
 
-    removingCommons = function(list){
+    function removingCommons(list){
         var nonArrayTemp = [],
             arrayTemp = [],
             uniqueArrayTemp = [],
@@ -275,7 +287,7 @@ $(document).ready(function() {
         return list;
     };
 
-    gettingUniqueElement = function(arr){
+    function gettingUniqueElement(arr){
         var tmp = [], repeating = [];
         for(var i = 0; i < arr.length; i++){
             var index = tmp.indexOf(arr[i]),
@@ -292,7 +304,7 @@ $(document).ready(function() {
         return tmp;
     };
 
-    solveNakedSingles = function(row, number){
+    function solveNakedSingles(row, number){
         for(var i = 0; i < row.length; i++){
             if(row[i].length && row[i].length > 1){
                 var hi = row[i];
@@ -308,7 +320,7 @@ $(document).ready(function() {
         }
     };
 
-    getSelectedNumbers = function(matrix){
+    function getSelectedNumbers(matrix){
         var newArray = [];
         for(var i = 0; i < matrix.length; i++){
             if(!Array.isArray(matrix[i])){
@@ -318,7 +330,7 @@ $(document).ready(function() {
         return newArray;
     };
 
-    removeCommons = function(common, arr){
+    function removeCommons(common, arr){
         for(var i = 0; i < arr.length; i++){
             for(var j = 0; j < common.length; j++){
                 if(arr[i] == common[j]){
@@ -329,7 +341,7 @@ $(document).ready(function() {
         return arr;
     };
 
-    setDifference = function(a, b){
+    function setDifference(a, b){
         var difference = [];
         for (var j = 0; j < a.length; j++) {
             if (b.indexOf(a[j]) === -1) {
@@ -339,7 +351,7 @@ $(document).ready(function() {
         return difference;
     }
 
-    setIntersection = function(a, b, type){
+    function setIntersection(a, b, type){
         var intersection = [];
         for (var j = 0; j < a.length; j++) {
             if (b.indexOf(a[j]) >= 0) {
@@ -349,7 +361,7 @@ $(document).ready(function() {
         return intersection;
     };
 
-    getColumn = function(matrix, column){
+    function getColumn(matrix, column){
         var columnArray = [];
         for(var i = 0; i < matrix.length; i++){
             if(matrix[i][column] !== null){
@@ -359,7 +371,7 @@ $(document).ready(function() {
         return columnArray;
     };
 
-    getMatrix = function(arr, row, column){
+    function getMatrix(arr, row, column){
         var rowMatrix = [],
             columnMatrix = [],
             processedMatrix = [],
