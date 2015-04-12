@@ -51,3 +51,19 @@ input{
     background-color: #adadad;
     border-width: 0;
 }
+.btn{
+    display: inline-block;
+    margin: 15px;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 1.42857143;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    border: 1px solid #adadad;
+    border-radius: 4px;
+    white-space: nowrap;
+    padding: 6px 12px;
+    -webkit-user-select: none;
+}

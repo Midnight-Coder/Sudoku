@@ -4,7 +4,7 @@ $(document).ready(function() {
         wrongClass = 'wrong',
         solvedArray = [];
 
-    $('.done').on('click', function(){
+    $('.validate').on('click', function(){
         var jsPromise = Promise.resolve(fillSudoku());
 
         jsPromise.then(function(done) {
