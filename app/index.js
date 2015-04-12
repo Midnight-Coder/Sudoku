@@ -43,7 +43,7 @@ $(document).ready(function() {
 
     populatingTheArray = function(){
         var matrix = [];
-        for(var i=0; i<n; i++){
+        for(var i = 0; i < n; i++){
             matrix[i] = [];
             $('.row[data-index=' + (i+1) + '] td').each(function(){
                 var val = parseInt($(this).text()) || null;
@@ -61,10 +61,10 @@ $(document).ready(function() {
                 var existingNumbers = matrix[i].filter(Boolean);
                 if(matrix[i][j] === null){
                     var column = getColumn(matrix, j);
-                    existingNumbers = concatArray(existingNumbers, column);
+                    existingNumbers = existingNumbers.concat(column);
                     var mMatrix = getMatrix(matrix, i, j);
-                    existingNumbers = concatArray(existingNumbers, mMatrix);
-                    var difference = getCommon(possibleValues, existingNumbers, 'diff');
+                    existingNumbers = existingNumbers.concat(mMatrix);
+                    var difference = setDifference(possibleValues, existingNumbers);
                     matrix[i][j] = difference;
                 }
             }
@@ -72,50 +72,39 @@ $(document).ready(function() {
         return matrix;
     };
 
-    flattenArray = function(matrix){
-        //Converts a [[1],..] -> [1,...]
+    solvingSudoku = function(matrix){
+        //Solve the singles
         for(var i = 0; i < matrix.length; i++){
             for(var j = 0; j < matrix[i].length; j++){
-                if(matrix[i][j].length === 1){
-                    matrix[i][j] = (matrix[i][j])[0];
+                if(Array.isArray(matrix[i][j]) && matrix[i][j].length === 1){
+                    solveNakedSingles(matrix[i], matrix[i][j]);
                 }
             }
         }
-        return matrix;
-    };
-
-    solvingSudoku = function(mainArray){
-        for(var i=0; i<mainArray.length; i++){
-            for(var j=0; j<mainArray[i].length; j++){
-                if(Array.isArray(mainArray[i][j]) && mainArray[i][j].length === 1){
-                    solveNakedSingles(mainArray[i], mainArray[i][j]);
-                }
-            }
-        }
-
-        flattenArray(mainArray);
-
-        for(var i=0; i<mainArray.length; i++){
-            var alpha = makeSinglesasArray(mainArray[i]);
-            for(var j=0; j<mainArray[i].length; j++){
-                if(Array.isArray(mainArray[i][j]) && mainArray[i][j].length > 0){
-                    var beta = getCommon(alpha, mainArray[i][j]);
+        //Recalculate the valid choices
+        flattenMultipleNestedLists(matrix);
+        //Remove the common choices
+        for(var i = 0; i < matrix.length; i++){
+            var alpha = getSelectedNumbers(matrix[i]);
+            for(var j = 0; j < matrix[i].length; j++){
+                if(Array.isArray(matrix[i][j]) && matrix[i][j].length > 0){
+                    var beta = setIntersection(alpha, matrix[i][j]);
                     if(beta.length > 0){
-                        mainArray[i][j] = removeCommons(beta, mainArray[i][j]);
+                        matrix[i][j] = removeCommons(beta, matrix[i][j]);
                     }
                 }
 
             }
         }
+        //Recalculate the valid choices
+        flattenMultipleNestedLists(matrix);
 
-        flattenArray(mainArray);
-
-        for(var i=0; i<mainArray.length; i++){
-            var newColumns = getColumn(mainArray, i);
-            var alpha = makeSinglesasArray(newColumns);
-            for(var j=0; j<newColumns.length; j++){
+        for(var i = 0; i < matrix.length; i++){
+            var newColumns = getColumn(matrix, i);
+            var alpha = getSelectedNumbers(newColumns);
+            for(var j = 0; j < newColumns.length; j++){
                 if(Array.isArray(newColumns[j]) && newColumns[j].length > 0){
-                    var beta = getCommon(alpha, newColumns[j]);
+                    var beta = setIntersection(alpha, newColumns[j]);
                     if(beta.length > 0){
                         newColumns[j] = removeCommons(beta, newColumns[j]);
                     }
@@ -126,11 +115,11 @@ $(document).ready(function() {
         var rowNo = 0, columnNo = 0;
         while(rowNo < 7){
             while(columnNo < 7){
-                var matrixForCaln = getMatrix(mainArray, rowNo, columnNo);
-                var alpha = makeSinglesasArray(matrixForCaln);
-                for(var i=0; i<matrixForCaln.length; i++){
+                var matrixForCaln = getMatrix(matrix, rowNo, columnNo);
+                var alpha = getSelectedNumbers(matrixForCaln);
+                for(var i = 0; i < matrixForCaln.length; i++){
                     if(Array.isArray(matrixForCaln[i]) && matrixForCaln[i].length > 0){
-                        var beta = getCommon(alpha, matrixForCaln[i]);
+                        var beta = setIntersection(alpha, matrixForCaln[i]);
                         if(beta.length > 0){
                             matrixForCaln[i] = removeCommons(beta, matrixForCaln[i]);
                         }
@@ -142,23 +131,23 @@ $(document).ready(function() {
             columnNo = 0;
         }
 
-        for(var i=0; i<mainArray.length; i++){
-            removingCommons(mainArray[i]);
+        for(var i = 0; i < matrix.length; i++){
+            removingCommons(matrix[i]);
         }
 
-        for(var a=0; a<mainArray.length; a++){
-            var newColumns = getColumn(mainArray, a);
+        for(var a = 0; a < matrix.length; a++){
+            var newColumns = getColumn(matrix, a);
             var resultColumn = removingCommons(newColumns);
-            mainArray = resultArray(a, resultColumn, mainArray);
+            matrix = resultArray(a, resultColumn, matrix);
         }
-        for(var i=0; i<mainArray.length; i++){
-            removingCommons(mainArray[i]);
+        for(var i = 0; i < matrix.length; i++){
+            removingCommons(matrix[i]);
         }
-        return mainArray;
+        return matrix;
     };
 
     resultArray = function(column, arr, main){
-        for(var i=0; i<arr.length; i++){
+        for(var i = 0; i < arr.length; i++){
             main[i][column] = arr[i];
         }
         return main;
@@ -166,12 +155,12 @@ $(document).ready(function() {
 
     iterationDone = function(arr){
         var arrayTemp = [], nonArrayTemp = [];
-        for(var i=0; i<arr.length; i++){
+        for(var i = 0; i < arr.length; i++){
             if(!Array.isArray(arr[i])){
                 nonArrayTemp.push(arr[i]);
             }else{
                 if(arr[i].length > 1){
-                    for(var j=0; j<arr[i].length; j++){
+                    for(var j = 0; j < arr[i].length; j++){
                         arrayTemp.push(arr[i][j]);
                     }
                 }
@@ -179,7 +168,7 @@ $(document).ready(function() {
         }
         arrayTemp = arrayTemp.sort();
         var uniqueArrayTemp = gettingUniqueElement(arrayTemp);
-        var areThereCommon = getCommon(arrayTemp, nonArrayTemp);
+        var areThereCommon = setIntersection(arrayTemp, nonArrayTemp);
         if(areThereCommon.length > 0 || uniqueArrayTemp.length > 0){
             return false;
         }else{
@@ -187,78 +176,82 @@ $(document).ready(function() {
         }
     };
 
-    makeSingleArraytoValue = function(arr){
-        for(var i=0; i<arr.length; i++){
-            if(Array.isArray(arr[i])){
-                if(arr[i].length == 1){
-                    arr[i] = Number(arr[i]);
-                }
-            }else{
-                arr[i] = Number(arr[i]);
-            }
+    flattenMultipleNestedLists = function(matrix){
+        //Converts a matrix:[[1,[4]],..] -> [[1,4],...]
+        for(var i = 0; i < matrix.length; i++){
+            flattenListOf1Elems(matrix[i]);
         }
-        return arr;
     };
 
-    removingCommons = function(arr){
+
+    flattenListOf1Elems = function(list){
+        //Flattens a list of depth 1
+        for(var i = 0; i < list.length; i++){
+            if(list[i].length === 1){
+                list[i] = Number(list[i]);
+            }
+        }
+    };
+
+    removingCommons = function(list){
         var nonArrayTemp = [],
             arrayTemp = [],
             uniqueArrayTemp = [],
             removeCommons1,
             removeCommons2;
-        arr = makeSingleArraytoValue(arr);
-        for(var i=0; i<arr.length; i++){
-            if(Array.isArray(arr[i]) && arr[i].length == 1){
-                arr[i] = arr[i][0];
+
+        flattenListOf1Elems(list);
+
+        for(var i = 0; i < list.length; i++){
+            //Separating selected Elements from multiple choice elements
+            if(!Array.isArray(list[i])){
+                nonArrayTemp.push(list[i]);
             }
-        }
-        for(var i=0; i<arr.length; i++){
-            if(!Array.isArray(arr[i])){
-                nonArrayTemp.push(arr[i]);
-            }else{
-                if(arr[i].length > 1){
-                    for(var j=0; j<arr[i].length; j++){
-                        arrayTemp.push(arr[i][j]);
-                    }
+            else{
+                //Push the choices in a separate list
+                for(var j = 0; j < list[i].length; j++){
+                    arrayTemp.push(list[i][j]);
                 }
             }
         }
+        //TODO get lodash.js
         arrayTemp = arrayTemp.sort();
         uniqueArrayTemp = gettingUniqueElement(arrayTemp);
-        var areThereCommon = getCommon(arrayTemp, nonArrayTemp);
+        var areThereCommon = setIntersection(arrayTemp, nonArrayTemp);
+
         if(areThereCommon.length > 0 || uniqueArrayTemp.length > 0){
             arrayTemp = [];
             uniqueArrayTemp = removeCommons(nonArrayTemp, uniqueArrayTemp);
-            for(var i=0; i<arr.length; i++){
-                if(Array.isArray(arr[i]) && arr[i].length > 1){
-                    removeCommons1 = getCommon(nonArrayTemp, arr[i]);
+            for(var i = 0; i < list.length; i++){
+                if(list[i].length > 1){
+                    removeCommons1 = setIntersection(nonArrayTemp, list[i]);
                     if(removeCommons1.length > 0){
-                        for(var q=0; q<removeCommons1.length; q++){
-                            var index1 = arr[i].indexOf(Number(removeCommons1[q]));
-                            arr[i].splice(index1, 1);
+                        for(var q = 0; q<removeCommons1.length; q++){
+                            var index1 = list[i].indexOf(Number(removeCommons1[q]));
+                            list[i].splice(index1, 1);
                         }
                     }
-                    removeCommons2 = getCommon(uniqueArrayTemp, arr[i]);
-                    if(removeCommons2.length > 0 && arr[i].length > 1){
-                        for(var w=0; w<removeCommons2.length; w++){
-                            var index2 = arr[i].indexOf(Number(removeCommons2[w]));
-                            arr[i] = arr[i].splice(index2, 1);
+                    removeCommons2 = setIntersection(uniqueArrayTemp, list[i]);
+                    if(removeCommons2.length > 0 && list[i].length > 1){
+                        for(var w = 0; w<removeCommons2.length; w++){
+                            var index2 = list[i].indexOf(Number(removeCommons2[w]));
+                            list[i] = list[i].splice(index2, 1);
                         }
                     }
                 }
             }
         }else{
-            return arr;
+            return list;
         }
-        for(var i=0; i<arr.length; i++){
-            if(Array.isArray(arr[i]) && arr[i].length == 1){
-                arr[i] = arr[i][0];
+        for(var i = 0; i < list.length; i++){
+            if(list[i].length === 1){
+                list[i] = list[i][0];
             }
         }
-        if(!iterationDone(arr)){
-            removingCommons(arr);
+        if(!iterationDone(list)){
+            removingCommons(list);
         }
-        return arr;
+        return list;
     };
 
     gettingUniqueElement = function(arr){
@@ -279,12 +272,12 @@ $(document).ready(function() {
     };
 
     solveNakedSingles = function(row, number){
-        for(var i=0; i<row.length; i++){
+        for(var i = 0; i < row.length; i++){
             if(row[i].length && row[i].length > 1){
                 var hi = row[i];
             }
             if(row[i].length && row[i].length > 1 && hi){
-                var send = getCommon(number, hi);
+                var send = setIntersection(number, hi);
                 var index = row[i].indexOf(send[0]);
 
                 if (index > -1) {
@@ -294,19 +287,19 @@ $(document).ready(function() {
         }
     };
 
-    makeSinglesasArray = function(arr){
+    getSelectedNumbers = function(matrix){
         var newArray = [];
-        for(var i=0; i<arr.length; i++){
-            if(!Array.isArray(arr[i])){
-                newArray.push(arr[i]);
+        for(var i = 0; i < matrix.length; i++){
+            if(!Array.isArray(matrix[i])){
+                newArray.push(matrix[i]);
             }
         }
         return newArray;
     };
 
     removeCommons = function(common, arr){
-        for(var i=0; i<arr.length; i++){
-            for(var j=0; j<common.length; j++){
+        for(var i = 0; i < arr.length; i++){
+            for(var j = 0; j < common.length; j++){
                 if(arr[i] == common[j]){
                     arr.splice(i, 1);
                 }
@@ -315,81 +308,74 @@ $(document).ready(function() {
         return arr;
     };
 
-    concatArray = function(array1, array2){
-        for(var i=0; i<array2.length; i++){
-            array1.push(array2[i]);
-        }
-        return array1;
-    };
-
-    getCommon = function(a, b, type){
-        var d = {};
-        var results = [], newResults = [];
-        for (var i = 0; i < b.length; i++) {
-            d[b[i]] = true;
-        }
+    setDifference = function(a, b){
+        var difference = [];
         for (var j = 0; j < a.length; j++) {
-            if (d[a[j]]) {
-                results.push(a[j]);
-            }else{
-                newResults.push(a[j]);
+            if (!b.indexOf(a[j])) {
+                difference.push(a[j]);
             }
         }
-        if(type === 'diff'){
-            return newResults
-        }else{
-            return results;
+        return difference;
+    }
+
+    setIntersection = function(a, b, type){
+        var intersection = [];
+        for (var j = 0; j < a.length; j++) {
+            if (b.indexOf(a[j])) {
+                intersection.push(a[j]);
+            }
         }
+        return intersection;
     };
 
-    getColumn = function(arr, column){
+    getColumn = function(matrix, column){
         var columnArray = [];
-        for(var i=0; i<arr.length; i++){
-            if(arr[i][column] !== ''){
-                columnArray.push(arr[i][column]);
+        for(var i = 0; i < matrix.length; i++){
+            if(matrix[i][column] !== ''){
+                columnArray.push(matrix[i][column]);
             }
         }
         return columnArray;
     };
 
     getMatrix = function(arr, row, column){
-        var matrix = [],
-            newMatrix = [],
-            finalMatrix = [],
+        var rowMatrix = [],
+            columnMatrix = [],
+            processedMatrix = [],
             flattenedMatrix = [], j;
         if(row < 3){
             row = 0;
-        }else if(row = 3 && row < 6){
+        }else if(row < 6){
             row = 3;
         }else {
             row = 6;
         }
 
         if(column < 3){
-            column =0;
-        }else if(column = 3 && column < 6){
+            column  = 0;
+        }else if(column < 6){
             column = 3;
         }else {
             column = 6;
         }
 
-        for(var i=row; i<row+3; i++){
-            matrix.push(arr[i]);
-            flattenedMatrix = [].concat.apply([],matrix);
+        for(var i = row; i < row+3; i++){
+            rowMatrix.push(arr[i]);
+            flattenedMatrix = [].concat.apply([],rowMatrix);
             j = column;
-            while(j<column+3){
-                newMatrix.push(flattenedMatrix[j]);
+            while(j < column+3){
+                columnMatrix.push(flattenedMatrix[j]);
                 j++;
             }
-            matrix.length = 0;
+            rowMatrix.length = 0;
             flattenedMatrix.length = 0;
         }
 
-        for(var i=0; i<newMatrix.length; i++){
-            if(newMatrix[i] !== ''){
-                finalMatrix.push(newMatrix[i]);
+        for(var i = 0; i < columnMatrix.length; i++){
+            if(columnMatrix[i] !== ''){
+                processedMatrix.push(columnMatrix[i]);
             }
         }
-        return finalMatrix;
+        return processedMatrix;
     };
 });
