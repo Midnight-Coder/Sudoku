@@ -31,7 +31,8 @@ $(document).ready(function() {
                 element.addClass(wrongClass);
             }
         });
-    }
+    };
+
     solveForACell = function(row, column){
         if(solvedArray.length === 0){
             solvedArray = populatingTheArray();
@@ -39,7 +40,6 @@ $(document).ready(function() {
         }
         return solvedArray[row][column];
     };
-
 
     populatingTheArray = function(){
         var matrix = [];
@@ -51,35 +51,39 @@ $(document).ready(function() {
             });
         }
         return eliminatingTheObvious(matrix);
-    },
-    eliminatingTheObvious = function(mainArray){
+    };
+
+    eliminatingTheObvious = function(matrix){
         var possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-        for(var i=0; i<mainArray.length; i++){
-            for(var j=0; j<mainArray[i].length; j++){
-                var existingNumbers = mainArray[i].filter(Boolean);
-                if(mainArray[i][j] === null){
-                    var column = getColumn(mainArray, j);
+        for(var i = 0; i < matrix.length; i++){
+            for(var j = 0; j < matrix[i].length; j++){
+                var existingNumbers = matrix[i].filter(Boolean);
+                if(matrix[i][j] === null){
+                    var column = getColumn(matrix, j);
                     existingNumbers = concatArray(existingNumbers, column);
-                    var mMatrix = getMatrix(mainArray, i, j);
+                    var mMatrix = getMatrix(matrix, i, j);
                     existingNumbers = concatArray(existingNumbers, mMatrix);
                     var difference = getCommon(possibleValues, existingNumbers, 'diff');
-                    mainArray[i][j] = difference;
+                    matrix[i][j] = difference;
                 }
             }
         }
-        return mainArray;
-    },
-    singleArraystoNumbers = function(mainArray){
-        for(var i=0; i<mainArray.length; i++){
-            for(var j=0; j<mainArray[i].length; j++){
-                if(Array.isArray(mainArray[i][j]) && mainArray[i][j].length === 1){
-                    mainArray[i][j] = makeSingleValueArraytoNumber(mainArray[i][j]);
+        return matrix;
+    };
+
+    flattenArray = function(matrix){
+        //Converts a [[1],..] -> [1,...]
+        for(var i = 0; i < matrix.length; i++){
+            for(var j = 0; j < matrix[i].length; j++){
+                if(matrix[i][j].length === 1){
+                    matrix[i][j] = (matrix[i][j])[0];
                 }
             }
         }
-        return mainArray;
-    },
+        return matrix;
+    };
+
     solvingSudoku = function(mainArray){
         for(var i=0; i<mainArray.length; i++){
             for(var j=0; j<mainArray[i].length; j++){
@@ -89,7 +93,7 @@ $(document).ready(function() {
             }
         }
 
-        singleArraystoNumbers(mainArray);
+        flattenArray(mainArray);
 
         for(var i=0; i<mainArray.length; i++){
             var alpha = makeSinglesasArray(mainArray[i]);
@@ -104,7 +108,7 @@ $(document).ready(function() {
             }
         }
 
-        singleArraystoNumbers(mainArray);
+        flattenArray(mainArray);
 
         for(var i=0; i<mainArray.length; i++){
             var newColumns = getColumn(mainArray, i);
@@ -151,13 +155,15 @@ $(document).ready(function() {
             removingCommons(mainArray[i]);
         }
         return mainArray;
-    },
+    };
+
     resultArray = function(column, arr, main){
         for(var i=0; i<arr.length; i++){
             main[i][column] = arr[i];
         }
         return main;
-    },
+    };
+
     iterationDone = function(arr){
         var arrayTemp = [], nonArrayTemp = [];
         for(var i=0; i<arr.length; i++){
@@ -179,7 +185,8 @@ $(document).ready(function() {
         }else{
             return true;
         }
-    },
+    };
+
     makeSingleArraytoValue = function(arr){
         for(var i=0; i<arr.length; i++){
             if(Array.isArray(arr[i])){
@@ -191,7 +198,8 @@ $(document).ready(function() {
             }
         }
         return arr;
-    }
+    };
+
     removingCommons = function(arr){
         var nonArrayTemp = [],
             arrayTemp = [],
@@ -251,7 +259,8 @@ $(document).ready(function() {
             removingCommons(arr);
         }
         return arr;
-    },
+    };
+
     gettingUniqueElement = function(arr){
         var tmp = [], repeating = [];
         for(var i = 0; i < arr.length; i++){
@@ -267,7 +276,8 @@ $(document).ready(function() {
             }
         }
         return tmp;
-    },
+    };
+
     solveNakedSingles = function(row, number){
         for(var i=0; i<row.length; i++){
             if(row[i].length && row[i].length > 1){
@@ -282,10 +292,8 @@ $(document).ready(function() {
                 }
             }
         }
-    },
-    makeSingleValueArraytoNumber =  function(arr){
-        return Number(arr);
-    },
+    };
+
     makeSinglesasArray = function(arr){
         var newArray = [];
         for(var i=0; i<arr.length; i++){
@@ -294,7 +302,8 @@ $(document).ready(function() {
             }
         }
         return newArray;
-    },
+    };
+
     removeCommons = function(common, arr){
         for(var i=0; i<arr.length; i++){
             for(var j=0; j<common.length; j++){
@@ -304,13 +313,15 @@ $(document).ready(function() {
             }
         }
         return arr;
-    },
+    };
+
     concatArray = function(array1, array2){
         for(var i=0; i<array2.length; i++){
             array1.push(array2[i]);
         }
         return array1;
-    },
+    };
+
     getCommon = function(a, b, type){
         var d = {};
         var results = [], newResults = [];
@@ -329,7 +340,8 @@ $(document).ready(function() {
         }else{
             return results;
         }
-    },
+    };
+
     getColumn = function(arr, column){
         var columnArray = [];
         for(var i=0; i<arr.length; i++){
@@ -338,7 +350,8 @@ $(document).ready(function() {
             }
         }
         return columnArray;
-    },
+    };
+
     getMatrix = function(arr, row, column){
         var matrix = [],
             newMatrix = [],
