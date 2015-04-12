@@ -17,3 +17,37 @@ h1{
     padding: 15px;
     overflow:hidden;
 }
+table{
+    text-align: center;
+    border-width: 2px 0 0 2px;
+    border-style: solid;
+    border-collapse: collapse;
+    width: 180px;
+    height: 150px;
+}
+.secondary-table{
+    border-width: 0 2px 2px 0;
+    border-style: solid;
+    .row{
+        border-width: 0 0 2px 0;
+    }
+}
+td{
+    padding: 0px;
+    width: 50px;
+}
+tr{
+    padding: 0px;
+}
+input{
+    width: 50px;
+    height: 30px;
+}
+.user-input{
+    text-align: center;
+    font-size: 14px;
+}
+.user-input:focus{
+    background-color: #adadad;
+    border-width: 0;
+}
