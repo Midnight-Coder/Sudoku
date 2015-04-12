@@ -24,7 +24,8 @@ $(document).ready(function() {
                 column = gridIndex[1],
                 inputValue = solveForACell(row, column);
 
-            if(element.val() === inputValue){
+            //Soft check for string input vs matrix rep
+            if(element.val() == inputValue){
                 element.addClass(correctClass);
             }else{
                 element.val(inputValue);

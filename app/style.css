@@ -38,6 +38,7 @@ td{
 }
 tr{
     padding: 0px;
+    height: 49px;
 }
 input{
     width: 50px;
@@ -66,4 +67,14 @@ input{
     white-space: nowrap;
     padding: 6px 12px;
     -webkit-user-select: none;
+}
+.correct{
+    background-color: #C8C8C8;
+    color: rgb(29, 148, 45);
+    width: 35px;
+}
+.wrong{
+    background-color: #C8C8C8;
+    color: rgb(192, 43, 43);
+    width: 35px;
 }
