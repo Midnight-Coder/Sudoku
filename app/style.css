@@ -18,6 +18,8 @@ h1{
     overflow:hidden;
 }
 .puzzle-container{
+    font-family: monospace;
+    font-size: 14px;
     width: 600px;
 }
 table{
