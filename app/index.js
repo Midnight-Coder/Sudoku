@@ -1,5 +1,9 @@
 $(document).ready(function() {
-    var n = 9;
+    var n = 9,
+        correctClass = 'correct',
+        wrongClass = 'wrong',
+        solvedArray = [];
+
     $('.done').on('click', function(){
         var jsPromise = Promise.resolve(fillSudoku());
 
@@ -14,34 +18,26 @@ $(document).ready(function() {
 
     fillSudoku = function(){
         $('.user-input').each(function(){
-            var elementSelector = $(this),
-                idName = this.dataset.index,
-                exisitingValue = this.value,
-                dimensions = idName.split("-"),
-                row = dimensions[0],
-                column = dimensions[1],
-                inputValue;
-            inputValue = findInputValue(row, column);
+            var element = $(this),
+                gridIndex = this.dataset.index.split('-'),
+                row = gridIndex[0],
+                column = gridIndex[1],
+                inputValue = solveForACell(row, column);
 
-            if(exisitingValue === inputValue){
-                //todo styles
-                elementSelector.addClass('correct');
+            if(element.val() === inputValue){
+                element.addClass(correctClass);
             }else{
-                this.value = inputValue;
-                elementSelector.addClass('wrong');
+                element.val(inputValue);
+                element.addClass(wrongClass);
             }
         });
     }
-    findInputValue = function(row, column, arr){
-        var value,
-            finalArr,
-            mainArray = populatingTheArray();
-
-        finalArr = solvingSudoku(mainArray);
-        if(!arr){
-            arr = finalArr;
+    solveForACell = function(row, column){
+        if(solvedArray.length === 0){
+            solvedArray = populatingTheArray();
+            solvingSudoku(solvedArray);
         }
-        return arr[row][column];
+        return solvedArray[row][column];
     };
 
 
@@ -50,7 +46,7 @@ $(document).ready(function() {
         for(var i=0; i<n; i++){
             matrix[i] = [];
             $('.row[data-index=' + (i+1) + '] td').each(function(){
-                var val = parseInt($(this).text()) || '';
+                var val = parseInt($(this).text()) || null;
                 matrix[i].push(val);
             });
         }
@@ -62,7 +58,7 @@ $(document).ready(function() {
         for(var i=0; i<mainArray.length; i++){
             for(var j=0; j<mainArray[i].length; j++){
                 var existingNumbers = mainArray[i].filter(Boolean);
-                if(mainArray[i][j] === ''){
+                if(mainArray[i][j] === null){
                     var column = getColumn(mainArray, j);
                     existingNumbers = concatArray(existingNumbers, column);
                     var mMatrix = getMatrix(mainArray, i, j);
