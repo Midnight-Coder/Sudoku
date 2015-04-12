@@ -2,31 +2,19 @@ $(document).ready(function() {
     var n = 9,
         correctClass = 'correct',
         wrongClass = 'wrong',
+        hideElement = 'hidden',
         solvedArray = [],
         lastFocus;
 
     hideSecondary = function(){
-        $('.solve-cell').hide();
-        $('.check-cell').hide();
-        $('.hint').hide();
-        $('.hint-text').hide();
+        $('.secondary-buttons').addClass(hideElement);
     };
-    hideSecondary();
 
     showSecondary = function(){
-        $('.solve-cell').show();
-        $('.check-cell').show();
-        $('.hint').show();
-        $('.hint-text').show();
+        $('.secondary-buttons').removeClass(hideElement);
     };
 
-    $('.validate').on('click', function(){
-        var jsPromise = Promise.resolve(fillSudoku());
-
-        jsPromise.then(function(done) {
-            console.log(done);
-        });
-    });
+    $('.validate').on('click', letItRip);
 
     $('.clear').on('click', function(){
         $('.user-input').val('');
@@ -35,10 +23,18 @@ $(document).ready(function() {
     $('.user-input').on('click', function(){
         lastFocus = this;
         showSecondary();
-    }),
+    });
     $('.user-input').on('blur', function() {
         lastFocus = this;
-    }),
+    });
+
+    function letItRip(){
+        var jsPromise = Promise.resolve(fillSudoku());
+
+        jsPromise.then(function(done) {
+            hideSecondary();
+        });
+    }
 
     fillSudoku = function(){
         $('.user-input').each(function(){
