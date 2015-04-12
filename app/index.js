@@ -2,7 +2,23 @@ $(document).ready(function() {
     var n = 9,
         correctClass = 'correct',
         wrongClass = 'wrong',
-        solvedArray = [];
+        solvedArray = [],
+        lastFocus;
+
+    hideSecondary = function(){
+        $('.solve-cell').hide();
+        $('.check-cell').hide();
+        $('.hint').hide();
+        $('.hint-text').hide();
+    };
+    hideSecondary();
+
+    showSecondary = function(){
+        $('.solve-cell').show();
+        $('.check-cell').show();
+        $('.hint').show();
+        $('.hint-text').show();
+    };
 
     $('.validate').on('click', function(){
         var jsPromise = Promise.resolve(fillSudoku());
@@ -15,6 +31,14 @@ $(document).ready(function() {
     $('.clear').on('click', function(){
         $('.user-input').val('');
     });
+
+    $('.user-input').on('click', function(){
+        lastFocus = this;
+        showSecondary();
+    }),
+    $('.user-input').on('blur', function() {
+        lastFocus = this;
+    }),
 
     fillSudoku = function(){
         $('.user-input').each(function(){
