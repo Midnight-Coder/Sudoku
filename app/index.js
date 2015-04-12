@@ -50,6 +50,13 @@ $(document).ready(function() {
         $hintText.text(message);
     });
 
+    $('.hint').on('click', function(){
+        var hintMatrix = populatingTheArray(),
+            dimensions = lastFocus.dataset.index.split('-');
+        $hintText.removeClass();
+        $hintText.text(hintMatrix[dimensions[0]][dimensions[1]]);
+    });
+
     function letItRip(){
         var jsPromise = Promise.resolve(fillSudoku());
 
