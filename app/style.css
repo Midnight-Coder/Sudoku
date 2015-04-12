@@ -17,6 +17,13 @@ h1{
     padding: 15px;
     overflow:hidden;
 }
+.puzzle-container{
+    width: 600px;
+}
+.action-buttons{
+    width: 50%;
+    margin: 0 auto;
+}
 table{
     text-align: center;
     border-width: 2px 0 0 2px;
@@ -67,6 +74,13 @@ input{
     white-space: nowrap;
     padding: 6px 12px;
     -webkit-user-select: none;
+}
+.action-buttons .finish{
+    background-color: rgba(203, 109, 109, 0.81);
+}
+.action-buttons .validate{
+    background-color: rgba(6, 69, 184, 0.73);
+    color: rgba(253, 253, 253, 1);
 }
 .correct{
     background-color: #C8C8C8;
