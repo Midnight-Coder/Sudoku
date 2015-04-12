@@ -77,6 +77,16 @@ input{
     width: 50%;
     margin: 0 auto;
 }
+.secondary-buttons{
+    width: 80%
+}
+.action-buttons{
+    width: 60%
+}
+.secondary-buttons, .action-buttons{
+    margin: 0 auto;
+}
+
 .secondary-buttons .solve-cell{
     background-color: rgba(203, 109, 109, 0.81);
 }
