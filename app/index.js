@@ -103,7 +103,7 @@ $(document).ready(function() {
             var newColumns = getColumn(matrix, i);
             var alpha = getSelectedNumbers(newColumns);
             for(var j = 0; j < newColumns.length; j++){
-                if(Array.isArray(newColumns[j]) && newColumns[j].length > 0){
+                if(newColumns[j].length > 0){
                     var beta = setIntersection(alpha, newColumns[j]);
                     if(beta.length > 0){
                         newColumns[j] = removeCommons(beta, newColumns[j]);
@@ -118,7 +118,7 @@ $(document).ready(function() {
                 var matrixForCaln = getMatrix(matrix, rowNo, columnNo);
                 var alpha = getSelectedNumbers(matrixForCaln);
                 for(var i = 0; i < matrixForCaln.length; i++){
-                    if(Array.isArray(matrixForCaln[i]) && matrixForCaln[i].length > 0){
+                    if(matrixForCaln[i].length > 0){
                         var beta = setIntersection(alpha, matrixForCaln[i]);
                         if(beta.length > 0){
                             matrixForCaln[i] = removeCommons(beta, matrixForCaln[i]);
