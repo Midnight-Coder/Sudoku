@@ -19,7 +19,12 @@ $(document).ready(function() {
     $('.validate').on('click', letItRip);
 
     $('.clear').on('click', function(){
-        $('.user-input').val('');
+        $('.user-input')
+        .val('')
+        .attr('disabled', false)
+        .removeClass(wrongClass)
+        .removeClass(correctClass);
+
     });
 
     $('.user-input').on('click', function(){
@@ -43,7 +48,7 @@ $(document).ready(function() {
             $hintText.addClass(correctClass);
         }
         else{
-            message = 'Wrong answer.'
+            message = 'Wrong.'
             $hintText.removeClass(correctClass);
             $hintText.addClass(wrongClass);
         }
@@ -62,6 +67,7 @@ $(document).ready(function() {
 
         jsPromise.then(function(done) {
             hideSecondary();
+            $('.user-input').attr('disabled', true);
         });
     }
 
